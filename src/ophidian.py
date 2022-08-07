@@ -88,6 +88,12 @@ class Ophidian:
         if newLocation == -1:
             # location doesn't exist, we're at a border
             return
+
+        # if new location has a snake part already
+        for e in newLocation.getEntities():
+            if type(e) is SnakePart:
+                time.sleep(1)
+                self.quitApplication()
         
         # move entity
         location.removeEntity(entity)
