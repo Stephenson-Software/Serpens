@@ -92,6 +92,8 @@ class Ophidian:
         # if new location has a snake part already
         for e in newLocation.getEntities():
             if type(e) is SnakePart:
+                # we have a collision
+                print("The ophidian collides with itself and ceases to be.")
                 time.sleep(1)
                 self.quitApplication()
         
@@ -128,6 +130,7 @@ class Ophidian:
 
         if previousSnakePartLocation == -1:
             print("Warning: A previous snake part's location was unexpectantly -1.")
+            time.sleep(1)
             return
         
         targetLocation = snakePart.lastPosition
@@ -200,6 +203,7 @@ class Ophidian:
         if targetLocation == -1:
             return
         self.environment.addEntityToLocation(newSnakePart, targetLocation)
+        print("The ophidian grows.")
     
     def spawnFood(self):
         food = Food((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
@@ -209,6 +213,7 @@ class Ophidian:
         snakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
         self.selectedSnakePart = snakePart
         self.environment.addEntity(snakePart)
+        print("The ophidian enters the world.")
         self.spawnFood()
         self.environment.printInfo()
         while self.running:
