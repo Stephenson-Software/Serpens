@@ -4,8 +4,9 @@ from entity import Entity
 # @author Daniel McCoy Stephenson
 # @since August 6th, 2022
 class SnakePart(Entity):
-    def __init__(self):
+    def __init__(self, color):
         Entity.__init__(self, "Snake Part")
+        self.color = color
         self.direction = 0
         self.nextSnakePart = -1
         self.previousSnakePart = -1
@@ -39,3 +40,6 @@ class SnakePart(Entity):
         while temp.hasPrevious():
             temp = temp.previousSnakePart
         return temp
+    
+    def getColor(self):
+        return self.color
