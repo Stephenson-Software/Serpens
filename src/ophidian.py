@@ -133,6 +133,7 @@ class Ophidian:
     
     def movePreviousSnakePart(self, snakePart):
         previousSnakePart = snakePart.previousSnakePart
+
         previousSnakePartLocation = self.getLocation(previousSnakePart)
 
         if previousSnakePartLocation == -1:
@@ -179,6 +180,11 @@ class Ophidian:
             else:
                 self.config.fullscreen = True
             self.initializeGameDisplay()
+        elif key == pygame.K_l:
+            if self.config.limitTickSpeed:
+                self.config.limitTickSpeed = False
+            else:
+                self.config.limitTickSpeed = True
 
     def getRandomDirection(self, grid: Grid, location: Location):
         direction = random.randrange(0, 4)
@@ -206,8 +212,9 @@ class Ophidian:
         snakePart.setPrevious(newSnakePart)
         newSnakePart.setNext(snakePart)
         grid, location = self.getLocationAndGrid(snakePart)
-        targetLocation = self.getOppositeDirection(snakePart.getDirection(), grid, location)
+        targetLocation = self.getOppositeDirection(snakePart.getTail().getDirection(), grid, location)
         if targetLocation == -1:
+            print("Warning: Target location was not found when spawning a snake part!")
             return
         self.environment.addEntityToLocation(newSnakePart, targetLocation)
         self.snakeParts.append(newSnakePart)
@@ -215,6 +222,15 @@ class Ophidian:
     
     def spawnFood(self):
         food = Food((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
+        
+        # get target location
+        targetLocation = -1
+        notFound = True
+        while notFound:
+            targetLocation = self.environment.getGrid().getRandomLocation()
+            if targetLocation.getNumEntities() == 0:
+                notFound = False
+        
         self.environment.addEntity(food)
     
     def initialize(self):
@@ -247,7 +263,8 @@ class Ophidian:
             self.drawEnvironment()
             pygame.display.update()
 
-            time.sleep(0.1)
+            if self.config.limitTickSpeed:
+                time.sleep(self.config.tickSpeed)
         
         self.quitApplication()
 
