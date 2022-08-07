@@ -117,6 +117,9 @@ class Serpens:
     def movePreviousSnakePart(self, snakePart):
         previousSnakePart = snakePart.previousSnakePart
         previousSnakePartLocation = self.getLocation(previousSnakePart)
+        if previousSnakePartLocation == -1:
+            return
+
         targetLocation = snakePart.lastPosition
         
         # move entity
@@ -169,7 +172,7 @@ class Serpens:
             return grid.getLeft(location)
         
     def spawnSnakePart(self, snakePart: SnakePart):
-        newSnakePart = SnakePart((random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255)))
+        newSnakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
         snakePart.setPrevious(newSnakePart)
         newSnakePart.setNext(snakePart)
         grid, location = self.getLocationAndGrid(snakePart)
@@ -179,11 +182,11 @@ class Serpens:
         self.environment.addEntityToLocation(newSnakePart, targetLocation)
     
     def spawnFood(self):
-        food = Food()
+        food = Food((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
         self.environment.addEntity(food)
     
     def run(self):
-        snakePart = SnakePart((random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255)))
+        snakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
         self.selectedSnakePart = snakePart
         self.environment.addEntity(snakePart)
         self.spawnFood()
