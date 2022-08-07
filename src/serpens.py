@@ -117,9 +117,7 @@ class Serpens:
     def movePreviousSnakePart(self, snakePart):
         previousSnakePart = snakePart.previousSnakePart
         previousSnakePartLocation = self.getLocation(previousSnakePart)
-        if previousSnakePartLocation == -1:
-            return
-
+        
         targetLocation = snakePart.lastPosition
         
         # move entity
