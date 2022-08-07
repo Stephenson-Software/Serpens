@@ -178,13 +178,23 @@ class Ophidian:
             return grid.getDown(location)
         elif direction == 3:
             return grid.getLeft(location)
+    
+    def getOppositeDirection(self, direction, grid, location):
+        if direction == 0:
+            return grid.getDown(location)
+        elif direction == 1:
+            return grid.getRight(location)
+        elif direction == 2:
+            return grid.getUp(location)
+        elif direction == 3:
+            return grid.getLeft(location)
         
     def spawnSnakePart(self, snakePart: SnakePart):
         newSnakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
         snakePart.setPrevious(newSnakePart)
         newSnakePart.setNext(snakePart)
         grid, location = self.getLocationAndGrid(snakePart)
-        targetLocation = self.getRandomDirection(grid, location)
+        targetLocation = self.getOppositeDirection(snakePart.getDirection(), grid, location)
         if targetLocation == -1:
             return
         self.environment.addEntityToLocation(newSnakePart, targetLocation)
