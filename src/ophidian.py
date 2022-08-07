@@ -13,7 +13,7 @@ from snakePart import SnakePart
 
 # @author Daniel McCoy Stephenson
 # @since August 6th, 2022
-class Serpens:
+class Ophidian:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Serpens")
@@ -210,5 +210,5 @@ class Serpens:
 
             time.sleep(0.1)
 
-serpens = Serpens()
-serpens.run()
+ophidian = Ophidian()
+ophidian.run()
