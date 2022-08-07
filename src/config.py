@@ -14,3 +14,5 @@ class Config:
         self.black = (0,0,0)
         self.white = (255,255,255)
         self.gridSize = random.randrange(8, 24)
+        self.limitTickSpeed = True
+        self.tickSpeed = 0.1
