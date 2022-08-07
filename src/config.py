@@ -13,4 +13,4 @@ class Config:
         self.fullscreen = False
         self.black = (0,0,0)
         self.white = (255,255,255)
-        self.gridSize = random.randrange(8, 12)
+        self.gridSize = random.randrange(8, 24)

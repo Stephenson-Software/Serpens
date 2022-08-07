@@ -138,13 +138,17 @@ class Serpens:
         if key == pygame.K_q:
             self.quitApplication()
         elif key == pygame.K_w:
-            self.selectedSnakePart.setDirection(0)
+            if self.selectedSnakePart.getDirection() != 2:
+                self.selectedSnakePart.setDirection(0)
         elif key == pygame.K_a:
-            self.selectedSnakePart.setDirection(1)
+            if self.selectedSnakePart.getDirection() != 3:
+                self.selectedSnakePart.setDirection(1)
         elif key == pygame.K_s:
-            self.selectedSnakePart.setDirection(2)
+            if self.selectedSnakePart.getDirection() != 0:
+                self.selectedSnakePart.setDirection(2)
         elif key == pygame.K_d:
-            self.selectedSnakePart.setDirection(3)
+            if self.selectedSnakePart.getDirection() != 1:
+                self.selectedSnakePart.setDirection(3)
         elif key == pygame.K_F11:
             if self.config.fullscreen:
                 self.config.fullscreen = False
