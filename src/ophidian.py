@@ -116,9 +116,11 @@ class Ophidian:
         if food == -1:
             return
 
+        foodColor = food.getColor()
+
         self.removeEntity(food)
         self.spawnFood()
-        self.spawnSnakePart(entity.getTail())
+        self.spawnSnakePart(entity.getTail(), foodColor)
     
     def movePreviousSnakePart(self, snakePart):
         previousSnakePart = snakePart.previousSnakePart
@@ -189,8 +191,8 @@ class Ophidian:
         elif direction == 3:
             return grid.getLeft(location)
         
-    def spawnSnakePart(self, snakePart: SnakePart):
-        newSnakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
+    def spawnSnakePart(self, snakePart: SnakePart, color):
+        newSnakePart = SnakePart(color)
         snakePart.setPrevious(newSnakePart)
         newSnakePart.setNext(snakePart)
         grid, location = self.getLocationAndGrid(snakePart)
