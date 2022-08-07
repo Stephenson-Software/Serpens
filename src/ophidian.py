@@ -129,9 +129,9 @@ class Ophidian:
         previousSnakePartLocation = self.getLocation(previousSnakePart)
 
         if previousSnakePartLocation == -1:
-            print("Warning: A previous snake part's location was unexpectantly -1.")
+            print("Error: A previous snake part's location was unexpectantly -1.")
             time.sleep(1)
-            return
+            self.quitApplication()
         
         targetLocation = snakePart.lastPosition
         
@@ -234,6 +234,7 @@ class Ophidian:
             elif snakePart.getDirection() == 3:
                 self.moveEntity(self.selectedSnakePart, 3)
 
+            self.gameDisplay.fill(self.config.white)
             self.drawEnvironment()
             pygame.display.update()
 
