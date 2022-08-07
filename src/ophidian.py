@@ -16,12 +16,12 @@ from snakePart import SnakePart
 class Ophidian:
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Serpens")
+        pygame.display.set_caption("Ophidian")
         self.config = Config()
         self.initializeGameDisplay()
         self.graphik = Graphik(self.gameDisplay)
         self.running = True
-        self.environment = Environment("Serpens", self.config.gridSize)
+        self.environment = Environment("Ophidian", self.config.gridSize)
         self.initializeLocationWidthAndHeight()
         self.snakeParts = []
 
@@ -109,7 +109,7 @@ class Ophidian:
         
         if food == -1:
             return
-        
+
         self.removeEntity(food)
         self.spawnFood()
         self.spawnSnakePart(entity.getTail())
@@ -117,6 +117,10 @@ class Ophidian:
     def movePreviousSnakePart(self, snakePart):
         previousSnakePart = snakePart.previousSnakePart
         previousSnakePartLocation = self.getLocation(previousSnakePart)
+
+        if previousSnakePartLocation == -1:
+            print("Warning: A previous snake part's location was unexpectantly -1.")
+            return
         
         targetLocation = snakePart.lastPosition
         
@@ -139,16 +143,16 @@ class Ophidian:
     def handleKeyDownEvent(self, key):
         if key == pygame.K_q:
             self.quitApplication()
-        elif key == pygame.K_w:
+        elif key == pygame.K_w or key == pygame.K_UP:
             if self.selectedSnakePart.getDirection() != 2:
                 self.selectedSnakePart.setDirection(0)
-        elif key == pygame.K_a:
+        elif key == pygame.K_a or key == pygame.K_LEFT:
             if self.selectedSnakePart.getDirection() != 3:
                 self.selectedSnakePart.setDirection(1)
-        elif key == pygame.K_s:
+        elif key == pygame.K_s or key == pygame.K_DOWN:
             if self.selectedSnakePart.getDirection() != 0:
                 self.selectedSnakePart.setDirection(2)
-        elif key == pygame.K_d:
+        elif key == pygame.K_d or key == pygame.K_RIGHT:
             if self.selectedSnakePart.getDirection() != 1:
                 self.selectedSnakePart.setDirection(3)
         elif key == pygame.K_F11:
