@@ -8,3 +8,4 @@ class Config:
         self.fullscreen = False
         self.black = (0,0,0)
         self.white = (255,255,255)
+        self.gridSize = 5
