@@ -199,6 +199,8 @@ class Ophidian:
                     self.quitApplication()
                 elif event.type == pygame.KEYDOWN:
                     self.handleKeyDownEvent(event.key)
+                elif event.type == pygame.WINDOWRESIZED:
+                    self.initializeLocationWidthAndHeight()
             
             if snakePart.getDirection() == 0:
                 self.moveEntity(self.selectedSnakePart, 0)
