@@ -48,7 +48,8 @@ class Serpens:
         else:
             color = self.config.white
             if location.getNumEntities() > 0:
-                color = self.config.black
+                topEntity = location.getEntities()[-1]
+                return topEntity.getColor()
         return color
 
     # Draws a location at a specified position.
@@ -168,7 +169,7 @@ class Serpens:
             return grid.getLeft(location)
         
     def spawnSnakePart(self, snakePart: SnakePart):
-        newSnakePart = SnakePart()
+        newSnakePart = SnakePart((random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255)))
         snakePart.setPrevious(newSnakePart)
         newSnakePart.setNext(snakePart)
         grid, location = self.getLocationAndGrid(snakePart)
@@ -182,7 +183,7 @@ class Serpens:
         self.environment.addEntity(food)
     
     def run(self):
-        snakePart = SnakePart()
+        snakePart = SnakePart((random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255)))
         self.selectedSnakePart = snakePart
         self.environment.addEntity(snakePart)
         self.spawnFood()
