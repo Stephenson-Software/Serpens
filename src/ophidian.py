@@ -23,8 +23,9 @@ class Ophidian:
         self.running = True
         self.environment = Environment("Ophidian", self.config.gridSize)
         self.initializeLocationWidthAndHeight()
+        self.initialize()
         self.snakeParts = []
-
+        
     def initializeGameDisplay(self):
         if self.config.fullscreen:
             self.gameDisplay = pygame.display.set_mode((self.config.displayWidth, self.config.displayHeight), pygame.FULLSCREEN)
@@ -56,6 +57,9 @@ class Ophidian:
     def drawLocation(self, location, xPos, yPos, width, height):
         color = self.getColorOfLocation(location)
         self.graphik.drawRectangle(xPos, yPos, width, height, color)
+    
+    def restartApplication(self):
+        self.__init__()
 
     def quitApplication(self):
         pygame.quit()
@@ -95,7 +99,10 @@ class Ophidian:
                 # we have a collision
                 print("The ophidian collides with itself and ceases to be.")
                 time.sleep(1)
-                self.quitApplication()
+                if self.config.restartUponCollision:
+                    self.restartApplication()
+                else:
+                    self.running = False
         
         # move entity
         location.removeEntity(entity)
@@ -154,7 +161,7 @@ class Ophidian:
     
     def handleKeyDownEvent(self, key):
         if key == pygame.K_q:
-            self.quitApplication()
+            self.running = False
         elif key == pygame.K_w or key == pygame.K_UP:
             if self.selectedSnakePart.getDirection() != 2:
                 self.selectedSnakePart.setDirection(0)
@@ -210,6 +217,7 @@ class Ophidian:
             print("Warning: Target location was not found when spawning a snake part!")
             return
         self.environment.addEntityToLocation(newSnakePart, targetLocation)
+        self.snakeParts.append(newSnakePart)
         print("The ophidian grows.")
     
     def spawnFood(self):
@@ -225,13 +233,14 @@ class Ophidian:
         
         self.environment.addEntity(food)
     
-    def run(self):
-        snakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
-        self.selectedSnakePart = snakePart
-        self.environment.addEntity(snakePart)
+    def initialize(self):
+        self.selectedSnakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
+        self.environment.addEntity(self.selectedSnakePart)
         print("The ophidian enters the world.")
         self.spawnFood()
         self.environment.printInfo()
+
+    def run(self):
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -241,13 +250,13 @@ class Ophidian:
                 elif event.type == pygame.WINDOWRESIZED:
                     self.initializeLocationWidthAndHeight()
             
-            if snakePart.getDirection() == 0:
+            if self.selectedSnakePart.getDirection() == 0:
                 self.moveEntity(self.selectedSnakePart, 0)
-            elif snakePart.getDirection() == 1:
+            elif self.selectedSnakePart.getDirection() == 1:
                 self.moveEntity(self.selectedSnakePart, 1)
-            elif snakePart.getDirection() == 2:
+            elif self.selectedSnakePart.getDirection() == 2:
                 self.moveEntity(self.selectedSnakePart, 2)
-            elif snakePart.getDirection() == 3:
+            elif self.selectedSnakePart.getDirection() == 3:
                 self.moveEntity(self.selectedSnakePart, 3)
 
             self.gameDisplay.fill(self.config.white)
@@ -256,6 +265,8 @@ class Ophidian:
 
             if self.config.limitTickSpeed:
                 time.sleep(self.config.tickSpeed)
+        
+        self.quitApplication()
 
 ophidian = Ophidian()
 ophidian.run()
