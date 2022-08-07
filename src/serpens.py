@@ -1,5 +1,7 @@
+import time
 import pygame
 from config import Config
+from entity import Entity
 from environment import Environment
 from graphik import Graphik
 from snakePart import SnakePart
@@ -17,6 +19,7 @@ class Serpens:
         self.running = True
         self.environment = Environment("Serpens", self.config.gridSize)
         self.initializeLocationWidthAndHeight()
+        self.snakeParts = []
 
     def initializeGameDisplay(self):
         if self.config.fullscreen:
@@ -52,15 +55,49 @@ class Serpens:
     def quitApplication(self):
         pygame.quit()
         quit()
+
+    def getLocation(self, entity: Entity):
+        locationID = entity.getLocationID()
+        grid = self.environment.getGrid()
+        return grid, grid.getLocation(locationID)
+
+    def moveEntity(self, entity: Entity, direction):
+        grid, location = self.getLocation(entity)
+
+        newLocation = -1
+        # get new location
+        if direction == 0:
+            newLocation = grid.getUp(location)
+        elif direction == 1:
+            newLocation = grid.getLeft(location)
+        elif direction == 2:
+            newLocation = grid.getDown(location)
+        elif direction == 3:
+            newLocation = grid.getRight(location)
+    
+        if newLocation == -1:
+            # location doesn't exist, we're at a border
+            return
+        
+        # move entity
+        location.removeEntity(entity)
+        newLocation.addEntity(entity)
+        
+        if self.config.debug:
+            print("[EVENT] ", entity.getName(), "moved to (", location.getX(), ",", location.getY(), ")")
+
     
     def handleKeyDownEvent(self, key):
         if key == pygame.K_q:
             self.quitApplication()
+        elif key == pygame.K_w:
+            self.selectedSnakePart.setDirection(0)
+        elif key == pygame.K_a:
+            self.selectedSnakePart.setDirection(1)
+        elif key == pygame.K_s:
+            self.selectedSnakePart.setDirection(2)
         elif key == pygame.K_d:
-            if self.config.debug == True:
-                self.config.debug = False
-            else:
-                self.config.debug = True
+            self.selectedSnakePart.setDirection(3)
         elif key == pygame.K_F11:
             if self.config.fullscreen:
                 self.config.fullscreen = False
@@ -69,7 +106,9 @@ class Serpens:
             self.initializeGameDisplay()
     
     def run(self):
-        self.environment.addEntity(SnakePart())
+        snakePart = SnakePart()
+        self.selectedSnakePart = snakePart
+        self.environment.addEntity(snakePart)
         self.environment.printInfo()
         while self.running:
             for event in pygame.event.get():
@@ -77,9 +116,20 @@ class Serpens:
                     self.quitApplication()
                 elif event.type == pygame.KEYDOWN:
                     self.handleKeyDownEvent(event.key)
+            
+            if snakePart.getDirection() == 0:
+                self.moveEntity(self.selectedSnakePart, 0)
+            elif snakePart.getDirection() == 1:
+                self.moveEntity(self.selectedSnakePart, 1)
+            elif snakePart.getDirection() == 2:
+                self.moveEntity(self.selectedSnakePart, 2)
+            elif snakePart.getDirection() == 3:
+                self.moveEntity(self.selectedSnakePart, 3)
 
             self.drawEnvironment()
             pygame.display.update()
+
+            time.sleep(0.1)
 
 serpens = Serpens()
 serpens.run()
