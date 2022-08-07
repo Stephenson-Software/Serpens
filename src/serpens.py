@@ -1,9 +1,13 @@
+import random
 import time
 import pygame
 from config import Config
 from entity import Entity
 from environment import Environment
+from food import Food
 from graphik import Graphik
+from grid import Grid
+from location import Location
 from snakePart import SnakePart
 
 
@@ -55,14 +59,19 @@ class Serpens:
     def quitApplication(self):
         pygame.quit()
         quit()
-
+    
     def getLocation(self, entity: Entity):
+        locationID = entity.getLocationID()
+        grid = self.environment.getGrid()
+        return grid.getLocation(locationID)
+
+    def getLocationAndGrid(self, entity: Entity):
         locationID = entity.getLocationID()
         grid = self.environment.getGrid()
         return grid, grid.getLocation(locationID)
 
     def moveEntity(self, entity: Entity, direction):
-        grid, location = self.getLocation(entity)
+        grid, location = self.getLocationAndGrid(entity)
 
         newLocation = -1
         # get new location
@@ -82,33 +91,101 @@ class Serpens:
         # move entity
         location.removeEntity(entity)
         newLocation.addEntity(entity)
+        entity.lastPosition = location
+
+        # move all attached snake parts
+        if entity.hasPrevious():
+            self.movePreviousSnakePart(entity)        
         
         if self.config.debug:
             print("[EVENT] ", entity.getName(), "moved to (", location.getX(), ",", location.getY(), ")")
+        
+        food = -1
+        # check for food
+        for e in newLocation.getEntities():
+            if type(e) is Food:
+                food = e
+        
+        if food == -1:
+            return
+        
+        self.removeEntity(food)
+        self.spawnFood()
+        self.spawnSnakePart(entity.getTail())
+    
+    def movePreviousSnakePart(self, snakePart):
+        previousSnakePart = snakePart.previousSnakePart
+        previousSnakePartLocation = self.getLocation(previousSnakePart)
+        targetLocation = snakePart.lastPosition
+        
+        # move entity
+        previousSnakePartLocation.removeEntity(previousSnakePart)
+        targetLocation.addEntity(previousSnakePart)
+        previousSnakePart.lastPosition = previousSnakePartLocation
 
+        if previousSnakePart.hasPrevious():
+            self.movePreviousSnakePart(previousSnakePart)
+    
+    def removeEntityFromLocation(self, entity: Entity):
+        location = self.getLocation(entity)
+        if location.isEntityPresent(entity):
+            location.removeEntity(entity)
+
+    def removeEntity(self, entity: Entity):
+        self.removeEntityFromLocation(entity)
     
     def handleKeyDownEvent(self, key):
         if key == pygame.K_q:
             self.quitApplication()
         elif key == pygame.K_w:
-            self.selectedSnakePart.setDirection(0)
+            if self.selectedSnakePart.getDirection() != 2:
+                self.selectedSnakePart.setDirection(0)
         elif key == pygame.K_a:
-            self.selectedSnakePart.setDirection(1)
+            if self.selectedSnakePart.getDirection() != 3:
+                self.selectedSnakePart.setDirection(1)
         elif key == pygame.K_s:
-            self.selectedSnakePart.setDirection(2)
+            if self.selectedSnakePart.getDirection() != 0:
+                self.selectedSnakePart.setDirection(2)
         elif key == pygame.K_d:
-            self.selectedSnakePart.setDirection(3)
+            if self.selectedSnakePart.getDirection() != 1:
+                self.selectedSnakePart.setDirection(3)
         elif key == pygame.K_F11:
             if self.config.fullscreen:
                 self.config.fullscreen = False
             else:
                 self.config.fullscreen = True
             self.initializeGameDisplay()
+
+    def getRandomDirection(self, grid: Grid, location: Location):
+        direction = random.randrange(0, 4)
+        if direction == 0:
+            return grid.getUp(location)
+        elif direction == 1:
+            return grid.getRight(location)
+        elif direction == 2:
+            return grid.getDown(location)
+        elif direction == 3:
+            return grid.getLeft(location)
+        
+    def spawnSnakePart(self, snakePart: SnakePart):
+        newSnakePart = SnakePart()
+        snakePart.setPrevious(newSnakePart)
+        newSnakePart.setNext(snakePart)
+        grid, location = self.getLocationAndGrid(snakePart)
+        targetLocation = self.getRandomDirection(grid, location)
+        if targetLocation == -1:
+            return
+        self.environment.addEntityToLocation(newSnakePart, targetLocation)
+    
+    def spawnFood(self):
+        food = Food()
+        self.environment.addEntity(food)
     
     def run(self):
         snakePart = SnakePart()
         self.selectedSnakePart = snakePart
         self.environment.addEntity(snakePart)
+        self.spawnFood()
         self.environment.printInfo()
         while self.running:
             for event in pygame.event.get():
