@@ -23,8 +23,9 @@ class Ophidian:
         self.running = True
         self.environment = Environment("Ophidian", self.config.gridSize)
         self.initializeLocationWidthAndHeight()
-        self.initialize()
         self.snakeParts = []
+        self.initialize()
+        self.tick = 0
         
     def initializeGameDisplay(self):
         if self.config.fullscreen:
@@ -62,6 +63,7 @@ class Ophidian:
         self.__init__()
 
     def quitApplication(self):
+        print("Length of snake:", len(self.snakeParts))
         pygame.quit()
         quit()
     
@@ -197,7 +199,17 @@ class Ophidian:
         elif direction == 3:
             return grid.getLeft(location)
     
-    def getOppositeDirection(self, direction, grid, location):
+    def getLocationDirection(self, direction, grid, location):
+        if direction == 0:
+            return grid.getUp(location)
+        elif direction == 1:
+            return grid.getLeft(location)
+        elif direction == 2:
+            return grid.getDown(location)
+        elif direction == 3:
+            return grid.getRight(location)
+    
+    def getLocationOppositeDirection(self, direction, grid, location):
         if direction == 0:
             return grid.getDown(location)
         elif direction == 1:
@@ -216,7 +228,7 @@ class Ophidian:
         targetLocation = -1
         while True:
             targetLocation = self.getRandomDirection(grid, location)
-            if targetLocation != -1:
+            if targetLocation != -1 and targetLocation != self.getLocationDirection(snakePart.getDirection(), grid, location):
                 break;
 
         self.environment.addEntityToLocation(newSnakePart, targetLocation)
@@ -239,6 +251,7 @@ class Ophidian:
     def initialize(self):
         self.selectedSnakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
         self.environment.addEntity(self.selectedSnakePart)
+        self.snakeParts.append(self.selectedSnakePart)
         print("The ophidian enters the world.")
         self.spawnFood()
         self.environment.printInfo()
@@ -268,6 +281,7 @@ class Ophidian:
 
             if self.config.limitTickSpeed:
                 time.sleep(self.config.tickSpeed)
+                self.tick += 1
         
         self.quitApplication()
 
