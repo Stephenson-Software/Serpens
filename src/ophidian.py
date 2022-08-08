@@ -60,14 +60,20 @@ class Ophidian:
         color = self.getColorOfLocation(location)
         self.graphik.drawRectangle(xPos, yPos, width, height, color)
     
-    def restartApplication(self):
-        print("The ophidian had a length of", len(self.snakeParts))
+    def displayStatsInConsole(self):
+        length = len(self.snakeParts)
+        numLocations = len(self.environment.grid.getLocations())
+        percentage = int(length/numLocations*100)
+        print("The ophidian had a length of", length, "and took up", percentage, "percent of the world.")
+        print("Score:", length * percentage)
         print("-----")
+    
+    def restartApplication(self):
+        self.displayStatsInConsole()
         self.__init__()
 
     def quitApplication(self):
-        print("The ophidian had a length of", len(self.snakeParts))
-        print("-----")
+        self.displayStatsInConsole()
         pygame.quit()
         quit()
     
