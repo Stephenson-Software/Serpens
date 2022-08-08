@@ -212,10 +212,13 @@ class Ophidian:
         snakePart.setPrevious(newSnakePart)
         newSnakePart.setNext(snakePart)
         grid, location = self.getLocationAndGrid(snakePart)
-        targetLocation = self.getOppositeDirection(snakePart.getTail().getDirection(), grid, location)
-        if targetLocation == -1:
-            print("Warning: Target location was not found when spawning a snake part!")
-            return
+        
+        targetLocation = -1
+        while True:
+            targetLocation = self.getRandomDirection(grid, location)
+            if targetLocation != -1:
+                break;
+
         self.environment.addEntityToLocation(newSnakePart, targetLocation)
         self.snakeParts.append(newSnakePart)
         print("The ophidian grows.")
