@@ -19,6 +19,7 @@ class Ophidian:
         pygame.display.set_caption("Ophidian")
         self.config = Config()
         self.initializeGameDisplay()
+        pygame.display.set_icon(pygame.image.load('src/icon.PNG'))
         self.graphik = Graphik(self.gameDisplay)
         self.running = True
         self.environment = Environment("Ophidian", self.config.gridSize)
