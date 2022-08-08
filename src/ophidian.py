@@ -22,7 +22,7 @@ class Ophidian:
         pygame.display.set_icon(pygame.image.load('src/icon.PNG'))
         self.graphik = Graphik(self.gameDisplay)
         self.running = True
-        self.environment = Environment("Ophidian", self.config.gridSize)
+        self.environment = Environment("Home of the Ophidian", self.config.gridSize)
         self.initializeLocationWidthAndHeight()
         self.snakeParts = []
         self.initialize()
@@ -61,10 +61,13 @@ class Ophidian:
         self.graphik.drawRectangle(xPos, yPos, width, height, color)
     
     def restartApplication(self):
+        print("The ophidian had a length of", len(self.snakeParts))
+        print("-----")
         self.__init__()
 
     def quitApplication(self):
-        print("Length of snake:", len(self.snakeParts))
+        print("The ophidian had a length of", len(self.snakeParts))
+        print("-----")
         pygame.quit()
         quit()
     
@@ -106,6 +109,7 @@ class Ophidian:
                     self.restartApplication()
                 else:
                     self.running = False
+                return
         
         # move entity
         location.removeEntity(entity)
@@ -188,6 +192,9 @@ class Ophidian:
                 self.config.limitTickSpeed = False
             else:
                 self.config.limitTickSpeed = True
+        elif key == pygame.K_r:
+            self.restartApplication()
+            return "restart"
 
     def getRandomDirection(self, grid: Grid, location: Location):
         direction = random.randrange(0, 4)
@@ -255,7 +262,6 @@ class Ophidian:
         self.snakeParts.append(self.selectedSnakePart)
         print("The ophidian enters the world.")
         self.spawnFood()
-        self.environment.printInfo()
 
     def run(self):
         while self.running:
@@ -263,7 +269,9 @@ class Ophidian:
                 if event.type == pygame.QUIT:
                     self.quitApplication()
                 elif event.type == pygame.KEYDOWN:
-                    self.handleKeyDownEvent(event.key)
+                    result = self.handleKeyDownEvent(event.key)
+                    if result == "restart":
+                        continue
                 elif event.type == pygame.WINDOWRESIZED:
                     self.initializeLocationWidthAndHeight()
             
