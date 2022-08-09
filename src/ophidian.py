@@ -27,6 +27,7 @@ class Ophidian:
         self.snakeParts = []
         self.initialize()
         self.tick = 0
+        self.score = 0
         
     def initializeGameDisplay(self):
         if self.config.fullscreen:
@@ -60,12 +61,18 @@ class Ophidian:
         color = self.getColorOfLocation(location)
         self.graphik.drawRectangle(xPos, yPos, width, height, color)
     
+    def calculateScore(self):
+        length = len(self.snakeParts)
+        numLocations = len(self.environment.grid.getLocations())
+        percentage = int(length/numLocations*100)
+        self.score = length * percentage
+    
     def displayStatsInConsole(self):
         length = len(self.snakeParts)
         numLocations = len(self.environment.grid.getLocations())
         percentage = int(length/numLocations*100)
         print("The ophidian had a length of", length, "and took up", percentage, "percent of the world.")
-        print("Score:", length * percentage)
+        print("Score:", self.score)
         print("-----")
     
     def restartApplication(self):
@@ -110,7 +117,7 @@ class Ophidian:
             if type(e) is SnakePart:
                 # we have a collision
                 print("The ophidian collides with itself and ceases to be.")
-                time.sleep(1)
+                time.sleep(self.config.tickSpeed * 20)
                 if self.config.restartUponCollision:
                     self.restartApplication()
                 else:
@@ -143,6 +150,7 @@ class Ophidian:
         self.removeEntity(food)
         self.spawnFood()
         self.spawnSnakePart(entity.getTail(), foodColor)
+        self.calculateScore()
     
     def movePreviousSnakePart(self, snakePart):
         previousSnakePart = snakePart.previousSnakePart
@@ -292,6 +300,8 @@ class Ophidian:
 
             self.gameDisplay.fill(self.config.white)
             self.drawEnvironment()
+            x, y = self.gameDisplay.get_size()
+            self.graphik.drawText(str(self.score), x/2, y/2, 50, self.config.black)
             pygame.display.update()
 
             if self.config.limitTickSpeed:

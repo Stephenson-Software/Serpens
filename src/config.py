@@ -13,7 +13,8 @@ class Config:
         self.fullscreen = False
         self.black = (0,0,0)
         self.white = (255,255,255)
-        self.gridSize = random.randrange(4, 16)
+        self.gridSize = random.randrange(4, 12)
         self.limitTickSpeed = True
         self.tickSpeed = 0.1
         self.restartUponCollision = True
+        self.textSize = 50
