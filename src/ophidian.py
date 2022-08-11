@@ -16,19 +16,16 @@ from snakePart import SnakePart
 class Ophidian:
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Ophidian")
         self.config = Config()
         self.initializeGameDisplay()
         pygame.display.set_icon(pygame.image.load('src/icon.PNG'))
         self.graphik = Graphik(self.gameDisplay)
         self.running = True
-        self.environment = Environment("Home of the Ophidian", self.config.gridSize)
-        self.initializeLocationWidthAndHeight()
         self.snakeParts = []
         self.initialize()
         self.tick = 0
         self.score = 0
-        
+
     def initializeGameDisplay(self):
         if self.config.fullscreen:
             self.gameDisplay = pygame.display.set_mode((self.config.displayWidth, self.config.displayHeight), pygame.FULLSCREEN)
@@ -77,7 +74,11 @@ class Ophidian:
     
     def restartApplication(self):
         self.displayStatsInConsole()
-        self.__init__()
+        if self.config.increaseGridSizeUponRestart:
+            self.config.gridSize += self.config.gridSizeIncreaseAmount
+        elif self.config.randomizeGridSizeUponRestart:
+            self.config.gridSize = random.randrange(self.config.minGridSize, self.config.maxGridSize)
+        self.initialize()
 
     def quitApplication(self):
         self.displayStatsInConsole()
@@ -255,7 +256,6 @@ class Ophidian:
 
         self.environment.addEntityToLocation(newSnakePart, targetLocation)
         self.snakeParts.append(newSnakePart)
-        print("The ophidian grows.")
     
     def spawnFood(self):
         food = Food((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
@@ -271,6 +271,12 @@ class Ophidian:
         self.environment.addEntity(food)
     
     def initialize(self):
+        self.score = 0
+        self.snakeParts = []
+        self.tick = 0
+        self.environment = Environment("Home of the Ophidian", self.config.gridSize)
+        self.initializeLocationWidthAndHeight()
+        pygame.display.set_caption("Ophidian - " + str(self.config.gridSize) + "x" + str(self.config.gridSize))
         self.selectedSnakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
         self.environment.addEntity(self.selectedSnakePart)
         self.snakeParts.append(self.selectedSnakePart)
