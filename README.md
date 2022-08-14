@@ -4,7 +4,6 @@ This game allows you to control an ever-increasingly growing ophidian in a virtu
 ## Controls
 Key | Action
 ------------ | -------------
-space | pause/unpause
 w | move up
 a | move left
 s | move down
