@@ -2,12 +2,12 @@ import random
 import time
 import pygame
 from config import Config
-from entity import Entity
-from environment import Environment
+from lib.pyenvlib.entity import Entity
+from lib.pyenvlib.environment import Environment
 from food import Food
-from graphik import Graphik
-from grid import Grid
-from location import Location
+from lib.graphik.src.graphik import Graphik
+from lib.pyenvlib.grid import Grid
+from lib.pyenvlib.location import Location
 from snakePart import SnakePart
 
 
@@ -18,7 +18,7 @@ class Ophidian:
         pygame.init()
         self.config = Config()
         self.initializeGameDisplay()
-        pygame.display.set_icon(pygame.image.load('src/icon.PNG'))
+        pygame.display.set_icon(pygame.image.load('src/media/icon.PNG'))
         self.graphik = Graphik(self.gameDisplay)
         self.running = True
         self.snakeParts = []
@@ -39,7 +39,8 @@ class Ophidian:
 
     # Draws the environment in its entirety.
     def drawEnvironment(self):
-        for location in self.environment.getGrid().getLocations():
+        for locationId in self.environment.getGrid().getLocations():
+            location = self.environment.getGrid().getLocation(locationId)
             self.drawLocation(location, location.getX() * self.locationWidth, location.getY() * self.locationHeight, self.locationWidth, self.locationHeight)
 
     # Returns the color that a location should be displayed as.
@@ -49,7 +50,8 @@ class Ophidian:
         else:
             color = self.config.white
             if location.getNumEntities() > 0:
-                topEntity = location.getEntities()[-1]
+                topEntityId = list(location.getEntities().keys())[-1]
+                topEntity = location.getEntity(topEntityId)
                 return topEntity.getColor()
         return color
 
@@ -114,7 +116,8 @@ class Ophidian:
             return
 
         # if new location has a snake part already
-        for e in newLocation.getEntities():
+        for eid in newLocation.getEntities():
+            e = newLocation.getEntity(eid)
             if type(e) is SnakePart:
                 # we have a collision
                 print("The ophidian collides with itself and ceases to be.")
@@ -139,7 +142,8 @@ class Ophidian:
         
         food = -1
         # check for food
-        for e in newLocation.getEntities():
+        for eid in newLocation.getEntities():
+            e = newLocation.getEntity(eid)
             if type(e) is Food:
                 food = e
         
