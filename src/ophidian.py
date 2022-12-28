@@ -22,6 +22,7 @@ class Ophidian:
         self.graphik = Graphik(self.gameDisplay)
         self.running = True
         self.snakeParts = []
+        self.level = 1
         self.initialize()
         self.tick = 0
         self.score = 0
@@ -74,12 +75,9 @@ class Ophidian:
         print("Score:", self.score)
         print("-----")
     
-    def restartApplication(self):
-        self.displayStatsInConsole()
-        if self.config.increaseGridSizeUponRestart:
-            self.config.gridSize += self.config.gridSizeIncreaseAmount
-        elif self.config.randomizeGridSizeUponRestart:
-            self.config.gridSize = random.randrange(self.config.minGridSize, self.config.maxGridSize)
+    def checkForLevelProgressAndReinitialize(self):
+        if (len(self.snakeParts) > len(self.environment.grid.getLocations()) * self.config.levelProgressPercentageRequired):
+            self.level += 1
         self.initialize()
 
     def quitApplication(self):
@@ -123,7 +121,7 @@ class Ophidian:
                 print("The ophidian collides with itself and ceases to be.")
                 time.sleep(self.config.tickSpeed * 20)
                 if self.config.restartUponCollision:
-                    self.restartApplication()
+                    self.checkForLevelProgressAndReinitialize()
                 else:
                     self.running = False
                 return
@@ -212,7 +210,7 @@ class Ophidian:
             else:
                 self.config.limitTickSpeed = True
         elif key == pygame.K_r:
-            self.restartApplication()
+            self.checkForLevelProgressAndReinitialize()
             return "restart"
 
     def getRandomDirection(self, grid: Grid, location: Location):
@@ -278,9 +276,12 @@ class Ophidian:
         self.score = 0
         self.snakeParts = []
         self.tick = 0
-        self.environment = Environment("Home of the Ophidian", self.config.gridSize)
+        if (self.level == 1):
+            self.environment = Environment("Level " + str(self.level), self.config.gridSize)
+        else:
+            self.environment = Environment("Level " + str(self.level), self.config.gridSize + (self.level - 1) * 2)
         self.initializeLocationWidthAndHeight()
-        pygame.display.set_caption("Ophidian - " + str(self.config.gridSize) + "x" + str(self.config.gridSize))
+        pygame.display.set_caption("Ophidian - Level " + str(self.level))
         self.selectedSnakePart = SnakePart((random.randrange(50, 200), random.randrange(50, 200), random.randrange(50, 200)))
         self.environment.addEntity(self.selectedSnakePart)
         self.snakeParts.append(self.selectedSnakePart)
@@ -311,7 +312,19 @@ class Ophidian:
             self.gameDisplay.fill(self.config.white)
             self.drawEnvironment()
             x, y = self.gameDisplay.get_size()
-            self.graphik.drawText(str(self.score), x/2, y/2, 50, self.config.black)
+
+            # draw progress bar
+            percentage = len(self.snakeParts) / len(self.environment.grid.getLocations())
+            pygame.draw.rect(self.gameDisplay, self.config.black, (0, y - 20, x, 20))
+            if percentage < self.config.levelProgressPercentageRequired/2:
+                pygame.draw.rect(self.gameDisplay, self.config.red, (0, y - 20, x * percentage, 20))
+            elif percentage < self.config.levelProgressPercentageRequired:
+                pygame.draw.rect(self.gameDisplay, self.config.yellow, (0, y - 20, x * percentage, 20))
+            else:
+                pygame.draw.rect(self.gameDisplay, self.config.green, (0, y - 20, x * percentage, 20))
+            pygame.draw.rect(self.gameDisplay, self.config.black, (0, y - 20, x, 20), 1)
+
+            
             pygame.display.update()
 
             if self.config.limitTickSpeed:

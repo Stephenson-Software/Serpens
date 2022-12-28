@@ -12,15 +12,15 @@ class Config:
         self.fullscreen = False
         self.black = (0,0,0)
         self.white = (255,255,255)
+        self.green = (0,255,0)
+        self.red = (255,0,0)
+        self.yellow = (255,255,0)
         self.textSize = 50
 
         # grid size
         self.gridSize = 5
-        self.randomizeGridSizeUponRestart = True
         self.minGridSize = 5
         self.maxGridSize = 12
-        self.increaseGridSizeUponRestart = False # this overrides randomizeGridSizeUponRestart
-        self.gridSizeIncreaseAmount = 2
 
         # tick speed
         self.limitTickSpeed = True
@@ -29,4 +29,4 @@ class Config:
         # misc
         self.debug = False
         self.restartUponCollision = True
-        
+        self.levelProgressPercentageRequired = 0.5
