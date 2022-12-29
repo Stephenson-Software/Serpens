@@ -42,7 +42,7 @@ class Ophidian:
     def drawEnvironment(self):
         for locationId in self.environment.getGrid().getLocations():
             location = self.environment.getGrid().getLocation(locationId)
-            self.drawLocation(location, location.getX() * self.locationWidth, location.getY() * self.locationHeight, self.locationWidth, self.locationHeight)
+            self.drawLocation(location, location.getX() * self.locationWidth - 1, location.getY() * self.locationHeight - 1, self.locationWidth + 2, self.locationHeight + 2)
 
     # Returns the color that a location should be displayed as.
     def getColorOfLocation(self, location):
