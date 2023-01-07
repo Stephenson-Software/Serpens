@@ -26,6 +26,7 @@ class Ophidian:
         self.initialize()
         self.tick = 0
         self.score = 0
+        self.changedDirectionThisTick = False
 
     def initializeGameDisplay(self):
         if self.config.fullscreen:
@@ -187,17 +188,21 @@ class Ophidian:
         if key == pygame.K_q:
             self.running = False
         elif key == pygame.K_w or key == pygame.K_UP:
-            if self.selectedSnakePart.getDirection() != 2:
+            if self.changedDirectionThisTick == False and self.selectedSnakePart.getDirection() != 2:
                 self.selectedSnakePart.setDirection(0)
+                self.changedDirectionThisTick = True
         elif key == pygame.K_a or key == pygame.K_LEFT:
-            if self.selectedSnakePart.getDirection() != 3:
+            if self.changedDirectionThisTick == False and self.selectedSnakePart.getDirection() != 3:
                 self.selectedSnakePart.setDirection(1)
+                self.changedDirectionThisTick = True
         elif key == pygame.K_s or key == pygame.K_DOWN:
-            if self.selectedSnakePart.getDirection() != 0:
+            if self.changedDirectionThisTick == False and self.selectedSnakePart.getDirection() != 0:
                 self.selectedSnakePart.setDirection(2)
+                self.changedDirectionThisTick = True
         elif key == pygame.K_d or key == pygame.K_RIGHT:
-            if self.selectedSnakePart.getDirection() != 1:
+            if self.changedDirectionThisTick == False and self.selectedSnakePart.getDirection() != 1:
                 self.selectedSnakePart.setDirection(3)
+                self.changedDirectionThisTick = True
         elif key == pygame.K_F11:
             if self.config.fullscreen:
                 self.config.fullscreen = False
@@ -330,6 +335,7 @@ class Ophidian:
             if self.config.limitTickSpeed:
                 time.sleep(self.config.tickSpeed)
                 self.tick += 1
+                self.changedDirectionThisTick = False
         
         self.quitApplication()
 
