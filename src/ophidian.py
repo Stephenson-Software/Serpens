@@ -4,7 +4,7 @@ import pygame
 from config.config import Config
 from lib.pyenvlib.entity import Entity
 from lib.pyenvlib.environment import Environment
-from config.food.food import Food
+from food.food import Food
 from lib.graphik.src.graphik import Graphik
 from lib.pyenvlib.grid import Grid
 from lib.pyenvlib.location import Location
