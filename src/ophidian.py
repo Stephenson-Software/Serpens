@@ -27,6 +27,7 @@ class Ophidian:
         self.tick = 0
         self.score = 0
         self.changedDirectionThisTick = False
+        self.collision = False
 
     def initializeGameDisplay(self):
         if self.config.fullscreen:
@@ -69,7 +70,10 @@ class Ophidian:
 
     # Draws a location at a specified position.
     def drawLocation(self, location, xPos, yPos, width, height):
-        color = self.getColorOfLocation(location)
+        if self.collision == True:
+            color = self.config.red
+        else:
+            color = self.getColorOfLocation(location)
         self.graphik.drawRectangle(xPos, yPos, width, height, color)
 
     def calculateScore(self):
@@ -139,7 +143,10 @@ class Ophidian:
             e = newLocation.getEntity(eid)
             if type(e) is SnakePart:
                 # we have a collision
+                self.collision = True
                 print("The ophidian collides with itself and ceases to be.")
+                self.drawEnvironment()
+                pygame.display.update()
                 time.sleep(self.config.tickSpeed * 20)
                 if self.config.restartUponCollision:
                     self.checkForLevelProgressAndReinitialize()
@@ -326,6 +333,7 @@ class Ophidian:
         self.environment.addEntity(food)
 
     def initialize(self):
+        self.collision = False
         self.score = 0
         self.snakeParts = []
         self.tick = 0
