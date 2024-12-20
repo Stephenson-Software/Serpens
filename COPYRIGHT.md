@@ -8,7 +8,7 @@ This project, **Ophidian**, is developed and maintained as part of **Preponderou
 
 ## Licensing
 
-The source code and associated materials for **Ophidian** are made available under the terms of the [MIT License](LICENSE). By contributing to this project, you agree that your contributions will also be licensed under the same terms.
+The source code and associated materials for **Ophidian** are made available under the terms of the [Apache 2.0](LICENSE). By contributing to this project, you agree that your contributions will also be licensed under the same terms.
 
 ## Attribution
 
